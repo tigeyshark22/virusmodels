@@ -5,16 +5,16 @@ pkg load statistics
 
 size=50; %side length of square
 
-days=365;
+days=30;
 
 initial_x=6; %first position of infected
 initial_y=8;
 
-infection_rate=5; %for each additional neighbor the percent chance of infection goes up by this number
+infection_rate=.05; %the rate that each additional neighbor multiplies the infection by
 infection_radius=3; %how much taxicab distance away someone can be and still infect
 infection_factor=2; %chance goes down by a factor of this for every further distance
-death_chance=5;
-recovery_chance=10;
+death_chance=.005;
+recovery_chance=.07;
 r_infection_rate=0; %how much each recovered person counts by as a neighbor, should be a decimal
 long_connections=5; %how many "longer distance" connections can infect people
 
@@ -35,51 +35,63 @@ endfor
 
 for j=1:days
   i=rand(size+2.*infection_radius);
-  i=floor(100*i); %the probabilities will be out of 100, numbers 0 to 99
   lattice_si_temp=lattice_si;
   infected_count=0;
   
   coords=floor(random("uniform", infection_radius.+1, size.+infection_radius, [4, long_connections]));
-  
-  for x=infection_radius.+1:size.+infection_radius
-    for y=infection_radius.+1:size.+infection_radius
-      if lattice_si(x,y)==0 %basic infection mechanism
-        if lattice_rd(x,y)==0
+  for connectioncount=1:long_connections
+    if abs(coords(1,connectioncount)-coords(3,connectioncount))+abs(coords(2,connectioncount)-coords(4,connectioncount))>=infection_radius
+      x=coords(1,connectioncount);
+      y=coords(2,connectioncount);
+      x2=coords(3,connectioncount);
+      y2=coords(4,connectioncount);
+      
+      for jj=1:2
+        if lattice_si(x,y)==0 && lattice_rd(x,y)==0
           infected_neighbors=0;
           infection_multiply=lattice_si(x.-infection_radius:x.+infection_radius,y.-infection_radius:y.+infection_radius);
           for row=1:2.*infection_radius.+1
             infected_neighbors+=infection_multiply(row,:)*infection_matrix(:,row);
           endfor
           
-          for connectioncount=1:long_connections
-            if abs(coords(1,connectioncount)-coords(3,connectioncount))+abs(coords(2,connectioncount)-coords(4,connectioncount))>=infection_radius
-              if coords(1,connectioncount)==x && coords(2, connectioncount)==y
-                if lattice_si(coords(3,connectioncount),coords(4,connectioncount))==1
-                  infected_neighbors+=1;
-                endif
-              endif
-              if coords(3,connectioncount)==x && coords(4, connectioncount)==y
-                if lattice_si(coords(1,connectioncount),coords(2,connectioncount))==1
-                  infected_neighbors+=1;
-                endif
-              endif        
-            endif
-          endfor
+          if lattice_si(x2,y2)==1
+            infected_neighbors+=1;
+          endif
           
-          if i(x,y)<=infection_rate*infected_neighbors
+          if i(x,y)<=infection_rate*infected_neighbors %because i remains the same, this can be repeated in the main loop without conflict
             lattice_si_temp(x,y)=1;
           endif
+          x=coords(3,connectioncount);
+          y=coords(4,connectioncount);
+          x2=coords(1,connectioncount);
+          y2=coords(2,connectioncount);
+        endif
+      endfor
+    endif
+  endfor
+
+  for x=infection_radius.+1:size.+infection_radius
+    for y=infection_radius.+1:size.+infection_radius
+      if lattice_si(x,y)==0 && lattice_rd(x,y)==0 %basic infection mechanism
+        infected_neighbors=0;
+        infection_multiply=lattice_si(x.-infection_radius:x.+infection_radius,y.-infection_radius:y.+infection_radius);
+        for row=1:2.*infection_radius.+1
+          infected_neighbors+=infection_multiply(row,:)*infection_matrix(:,row);
+        endfor
+        
+        if i(x,y)<=infection_rate*infected_neighbors
+          lattice_si_temp(x,y)=1;
         endif
       endif
       
       if lattice_si(x,y)==1 %determines what happens to infected
         infected_count+=1;
-        if i(x,y)>=100-death_chance
+        if i(x,y)>=1-death_chance
           lattice_rd(x,y)=3; %3 is dead
           lattice_si_temp(x,y)=0;
         endif
         
-        if i(x,y)<=recovery_chance-1
+        if i(x,y)<=recovery_chance
           lattice_rd(x,y)=2; %2 is recovered
           lattice_si_temp(x,y)=r_infection_rate;
         endif
@@ -125,3 +137,4 @@ end_s
 end_i
 end_r
 end_d
+ 
