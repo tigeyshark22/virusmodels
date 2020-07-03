@@ -1,7 +1,7 @@
 %SIRD model
 clear
 
-size=50; %side length of square
+size=64; %side length of square
 
 days=30;
 
@@ -62,23 +62,30 @@ for j=1:days
   end_i_average(j)=sum(end_i(j,:))/times;
   end_r_average(j)=sum(end_r(j,:))/times;
   end_d_average(j)=sum(end_d(j,:))/times;
+  end_ss_average(j)=sum(end_s(j,:).*end_s(j,:))/times;
   end_si_average(j)=sum(end_s(j,:).*end_i(j,:))/times;
   end_sr_average(j)=sum(end_s(j,:).*end_r(j,:))/times;
   end_sd_average(j)=sum(end_s(j,:).*end_d(j,:))/times;
+  end_ii_average(j)=sum(end_i(j,:).*end_i(j,:))/times;
   end_ir_average(j)=sum(end_i(j,:).*end_r(j,:))/times;
   end_id_average(j)=sum(end_i(j,:).*end_d(j,:))/times;
+  end_rr_average(j)=sum(end_r(j,:).*end_r(j,:))/times;
   end_rd_average(j)=sum(end_r(j,:).*end_d(j,:))/times;
+  end_dd_average(j)=sum(end_d(j,:).*end_d(j,:))/times;
 endfor
 
 figure(1)
 x=1:days;
+clf;
 hold on
 plot(x,end_s_average(x),'b','LineWidth',1)
 plot(x,end_i_average(x),'r','LineWidth',1)
 plot(x,end_r_average(x),'g','LineWidth',1)
 plot(x,end_d_average(x),'k','LineWidth',1)
+title({'Averages over 100 runs of the simulation'})
 
 figure(2)
+clf;
 hold on
 plot(x,(end_si_average(x)-end_s_average(x).*end_i_average(x))./end_si_average(x),'r','LineWidth',1)
 plot(x,(end_sr_average(x)-end_s_average(x).*end_r_average(x))./end_sr_average(x),'g','LineWidth',1)
@@ -86,3 +93,13 @@ plot(x,(end_sd_average(x)-end_s_average(x).*end_d_average(x))./end_sd_average(x)
 plot(x,(end_ir_average(x)-end_i_average(x).*end_r_average(x))./end_ir_average(x),'c','LineWidth',1)
 plot(x,(end_id_average(x)-end_i_average(x).*end_d_average(x))./end_id_average(x),'m','LineWidth',1)
 plot(x,(end_rd_average(x)-end_r_average(x).*end_d_average(x))./end_rd_average(x),'b','LineWidth',1)
+legend('SI','SR','SD','IR','ID','RD')
+
+figure(3)
+clf;
+hold on
+plot(x,(end_ss_average(x)-end_s_average(x).*end_s_average(x))./end_ss_average(x),'b','LineWidth',1)
+plot(x,(end_ii_average(x)-end_i_average(x).*end_i_average(x))./end_ii_average(x),'r','LineWidth',1)
+plot(x,(end_rr_average(x)-end_r_average(x).*end_r_average(x))./end_rr_average(x),'g','LineWidth',1)
+plot(x,(end_dd_average(x)-end_d_average(x).*end_d_average(x))./end_dd_average(x),'k','LineWidth',1)
+legend('SS','II','RR','DD')
