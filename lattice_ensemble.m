@@ -77,3 +77,12 @@ plot(x,end_s_average(x),'b','LineWidth',1)
 plot(x,end_i_average(x),'r','LineWidth',1)
 plot(x,end_r_average(x),'g','LineWidth',1)
 plot(x,end_d_average(x),'k','LineWidth',1)
+
+figure(2)
+hold on
+plot(x,(end_si_average(x)-end_s_average(x).*end_i_average(x))./end_si_average(x),'r','LineWidth',1)
+plot(x,(end_sr_average(x)-end_s_average(x).*end_r_average(x))./end_sr_average(x),'g','LineWidth',1)
+plot(x,(end_sd_average(x)-end_s_average(x).*end_d_average(x))./end_sd_average(x),'k','LineWidth',1)
+plot(x,(end_ir_average(x)-end_i_average(x).*end_r_average(x))./end_ir_average(x),'c','LineWidth',1)
+plot(x,(end_id_average(x)-end_i_average(x).*end_d_average(x))./end_id_average(x),'m','LineWidth',1)
+plot(x,(end_rd_average(x)-end_r_average(x).*end_d_average(x))./end_rd_average(x),'b','LineWidth',1)
