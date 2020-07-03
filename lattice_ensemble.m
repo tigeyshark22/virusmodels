@@ -27,7 +27,8 @@ endfor
 for iter=1:times
   lattice_si=zeros(size,size);
   lattice_rd=zeros(size,size); %0 is susceptible
-
+  lattice_i_days=zeros(size,size);
+  
   initial_infections=1;
 
   for x=1:initial_infections
@@ -39,10 +40,12 @@ for iter=1:times
   for j=1:days
     i=rand(size);
     lattice_si_temp=lattice_si;
+    
+    lattice_i_days=lattice_i_days+(lattice_si==1); %each day the chance of infection goes up linearly
       
     lattice_neighbors=infection_rate*conv2(lattice_si,infection_matrix,"same")-i;
     lattice_si_temp=lattice_si | (lattice_neighbors>0);
-    lattice_rd=lattice_rd+3*(lattice_si.*(i>(1-death_chance))) + 2*(lattice_si.*(i<recovery_chance));
+    lattice_rd=lattice_rd+3*(lattice_si.*(i>(1-(death_chance*lattice_i_days))))+2*(lattice_si.*(i<(recovery_chance*lattice_i_days)));
     lattice_si=lattice_si_temp & not(lattice_rd);
     
     end_s(j,iter)=sum(sum((lattice_si+lattice_rd)==0));

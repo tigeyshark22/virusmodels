@@ -7,8 +7,9 @@ days=30;
 
 lattice_si=zeros(size,size);
 lattice_rd=zeros(size,size); %0 is susceptible
+lattice_i_days=zeros(size,size);
 
-initial_infections=1;
+initial_infections=2;
 
 for x=1:initial_infections
   initial_x=floor(size*rand())+1; %first position of infected
@@ -19,8 +20,8 @@ endfor
 infection_rate=.1; %the rate that each additional neighbor multiplies the infection by
 infection_radius=3; %how much taxicab distance away someone can be and still infect
 infection_factor=2; %chance goes down by a factor of this for every further distance
-death_chance=.01;
-recovery_chance=.05;
+death_chance=.001;
+recovery_chance=.004; %death+recovery chance should divide into 1.00 evenly
 long_connections=5; %how many "longer distance" connections can infect people
 
 %setting up infection mechanism
@@ -36,10 +37,12 @@ endfor
 for j=1:days
   i=rand(size);
   lattice_si_temp=lattice_si;
+  
+  lattice_i_days=lattice_i_days+(lattice_si==1); %each day the chance of infection goes up linearly
     
   lattice_neighbors=infection_rate*conv2(lattice_si,infection_matrix,"same")-i;
   lattice_si_temp=lattice_si | (lattice_neighbors>0);
-  lattice_rd=lattice_rd+3*(lattice_si.*(i>(1-death_chance))) + 2*(lattice_si.*(i<recovery_chance));
+  lattice_rd=lattice_rd+3*(lattice_si.*(i>(1-(death_chance*lattice_i_days))))+2*(lattice_si.*(i<(recovery_chance*lattice_i_days)));
   lattice_si=lattice_si_temp & not(lattice_rd);
   
   end_s(j)=sum(sum((lattice_si+lattice_rd)==0));
@@ -63,6 +66,7 @@ contourf(x,y,lattice_si(x,y)+lattice_rd(x,y),0:4)
 title ({"Final lattice"});
 
 figure(2)
+clf;
 x=1:days;
 hold on
 plot(x,end_s(x),'b','LineWidth',1)
