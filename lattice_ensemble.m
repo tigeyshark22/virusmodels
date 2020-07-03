@@ -8,8 +8,8 @@ days=30;
 infection_rate=.1; %the rate that each additional neighbor multiplies the infection by
 infection_radius=3; %how much taxicab distance away someone can be and still infect
 infection_factor=2; %chance goes down by a factor of this for every further distance
-death_chance=.01;
-recovery_chance=.05;
+death_chance=.005;
+recovery_chance=.015;
 long_connections=5; %how many "longer distance" connections can infect people
 
 times=100; %ensemble only
@@ -41,7 +41,7 @@ for iter=1:times
     i=rand(size);
     lattice_si_temp=lattice_si;
     
-    lattice_i_days=lattice_i_days+(lattice_si==1); %each day the chance of infection goes up linearly
+    lattice_i_days=lattice_i_days+(lattice_si==1); %each day the chance of recovery/death goes up linearly
       
     lattice_neighbors=infection_rate*conv2(lattice_si,infection_matrix,"same")-i;
     lattice_si_temp=lattice_si | (lattice_neighbors>0);
