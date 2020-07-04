@@ -1,7 +1,7 @@
 %SIRD model
 clear
 
-size=50; %side length of square
+size=64; %side length of square
 
 days=30;
 
@@ -10,6 +10,18 @@ lattice_rd=zeros(size,size); %0 is susceptible
 lattice_i_days=zeros(size,size);
 
 initial_infections=2;
+infection_rate=.1; %the rate that each additional neighbor multiplies the infection by
+infection_radius=3; %how much taxicab distance away someone can be and still infect
+infection_factor=2; %chance goes down by a factor of this for every further distance
+death_chance=.005; %chances are PER DAY
+recovery_chance=.015;
+long_connections=5; %how many "longer distance" connections can infect people
+
+mask_probability=.3;
+mask_effectiveness=.5; %how much of the time it prevents infection
+
+elderly_probability=.085; %reflects current statistics for the world
+elderly_vulnerability=6; %how many times as vulnerable they are
 
 for x=1:initial_infections
   initial_x=floor(size*rand())+1; %first position of infected
@@ -17,12 +29,11 @@ for x=1:initial_infections
   lattice_si(initial_x,initial_y)=1; %1 is infected
 endfor
 
-infection_rate=.1; %the rate that each additional neighbor multiplies the infection by
-infection_radius=3; %how much taxicab distance away someone can be and still infect
-infection_factor=2; %chance goes down by a factor of this for every further distance
-death_chance=.005; %chances are PER DAY
-recovery_chance=.015;
-long_connections=5; %how many "longer distance" connections can infect people
+i=rand(size);
+mask_wearers=1-(mask_effectiveness*(i<mask_probability));
+
+i=rand(size);
+elderly=1+(elderly_vulnerability-1)*(i<elderly_probability);
 
 %setting up infection mechanism
 for radius=1:infection_radius
@@ -40,7 +51,7 @@ for j=1:days
   
   lattice_i_days=lattice_i_days+(lattice_si==1); %each day the chance of death/recovery goes up linearly
     
-  lattice_neighbors=infection_rate*conv2(lattice_si,infection_matrix,"same")-i;
+  lattice_neighbors=(infection_rate*conv2(lattice_si,infection_matrix,"same")).*mask_wearers.*elderly-i;
   lattice_si_temp=lattice_si | (lattice_neighbors>0);
   lattice_rd=lattice_rd+3*(lattice_si.*(i>(1-(death_chance*lattice_i_days))))+2*(lattice_si.*(i<(recovery_chance*lattice_i_days)));
   lattice_si=lattice_si_temp & not(lattice_rd);
