@@ -3,11 +3,11 @@ clear
 
 size=64; %side length of square
 
-days=30;
+days=500;
 
-infection_rate=.1; %the rate that each additional neighbor multiplies the infection by
-infection_radius=3; %how much taxicab distance away someone can be and still infect
-infection_factor=2; %chance goes down by a factor of this for every further distance
+infection_rate=.001; %the rate that each additional neighbor multiplies the infection by
+infection_radius=10; %how much taxicab distance away someone can be and still infect
+infection_factor=1.1; %chance goes down by a factor of this for every further distance
 death_chance=.005;
 recovery_chance=.015;
 long_connections=5; %how many "longer distance" connections can infect people
@@ -32,8 +32,10 @@ for iter=1:times
   initial_infections=1;
 
   for x=1:initial_infections
-    initial_x=floor(size*rand())+1; %first position of infected
-    initial_y=floor(size*rand())+1;
+%    initial_x=floor(size*rand())+1; %first position of infected
+%    initial_y=floor(size*rand())+1;
+    initial_x=floor(size/2)+1;
+    initial_y=floor(size/2)+1;
     lattice_si(initial_x,initial_y)=1; %1 is infected
   endfor
 
@@ -90,19 +92,19 @@ title({'Averages over 100 runs of the simulation'})
 figure(2)
 clf;
 hold on
-plot(x,(end_si_average(x)-end_s_average(x).*end_i_average(x))./end_si_average(x),'r','LineWidth',1)
-plot(x,(end_sr_average(x)-end_s_average(x).*end_r_average(x))./end_sr_average(x),'g','LineWidth',1)
-plot(x,(end_sd_average(x)-end_s_average(x).*end_d_average(x))./end_sd_average(x),'k','LineWidth',1)
-plot(x,(end_ir_average(x)-end_i_average(x).*end_r_average(x))./end_ir_average(x),'c','LineWidth',1)
-plot(x,(end_id_average(x)-end_i_average(x).*end_d_average(x))./end_id_average(x),'m','LineWidth',1)
-plot(x,(end_rd_average(x)-end_r_average(x).*end_d_average(x))./end_rd_average(x),'b','LineWidth',1)
+plot(x,(end_si_average(x)-end_s_average(x).*end_i_average(x))./(end_s_average(x).*end_i_average(x)),'r','LineWidth',1)
+plot(x,(end_sr_average(x)-end_s_average(x).*end_r_average(x))./(end_s_average(x).*end_r_average(x)),'g','LineWidth',1)
+plot(x,(end_sd_average(x)-end_s_average(x).*end_d_average(x))./(end_s_average(x).*end_d_average(x)),'k','LineWidth',1)
+plot(x,(end_ir_average(x)-end_i_average(x).*end_r_average(x))./(end_i_average(x).*end_r_average(x)),'c','LineWidth',1)
+plot(x,(end_id_average(x)-end_i_average(x).*end_d_average(x))./(end_i_average(x).*end_d_average(x)),'m','LineWidth',1)
+plot(x,(end_rd_average(x)-end_r_average(x).*end_d_average(x))./(end_r_average(x).*end_d_average(x)),'b','LineWidth',1)
 legend('SI','SR','SD','IR','ID','RD')
 
 figure(3)
 clf;
 hold on
-plot(x,(end_ss_average(x)-end_s_average(x).*end_s_average(x))./end_ss_average(x),'b','LineWidth',1)
-plot(x,(end_ii_average(x)-end_i_average(x).*end_i_average(x))./end_ii_average(x),'r','LineWidth',1)
-plot(x,(end_rr_average(x)-end_r_average(x).*end_r_average(x))./end_rr_average(x),'g','LineWidth',1)
-plot(x,(end_dd_average(x)-end_d_average(x).*end_d_average(x))./end_dd_average(x),'k','LineWidth',1)
+plot(x,(end_ss_average(x)-end_s_average(x).*end_s_average(x))./(end_s_average(x).*end_s_average(x)),'b','LineWidth',1)
+plot(x,(end_ii_average(x)-end_i_average(x).*end_i_average(x))./(end_i_average(x).*end_i_average(x)),'r','LineWidth',1)
+plot(x,(end_rr_average(x)-end_r_average(x).*end_r_average(x))./(end_r_average(x).*end_r_average(x)),'g','LineWidth',1)
+plot(x,(end_dd_average(x)-end_d_average(x).*end_d_average(x))./(end_d_average(x).*end_d_average(x)),'k','LineWidth',1)
 legend('SS','II','RR','DD')
