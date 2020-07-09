@@ -3,11 +3,11 @@ clear
 
 size=64; %side length of square
 
-days=500;
+days=30;
 
-infection_rate=.001; %the rate that each additional neighbor multiplies the infection by
-infection_radius=10; %how much taxicab distance away someone can be and still infect
-infection_factor=1.1; %chance goes down by a factor of this for every further distance
+infection_rate=.1; %the rate that each additional neighbor multiplies the infection by
+infection_radius=3; %how much taxicab distance away someone can be and still infect
+infection_factor=1.5; %chance goes down by a factor of this for every further distance
 death_chance=.005;
 recovery_chance=.015;
 long_connections=5; %how many "longer distance" connections can infect people
@@ -25,8 +25,8 @@ for radius=1:infection_radius
 endfor
 
 for iter=1:times
-  lattice_si=zeros(size,size);
-  lattice_rd=zeros(size,size); %0 is susceptible
+  lattice_si(:,:,iter)=zeros(size,size);
+  lattice_rd(:,:,iter)=zeros(size,size); %0 is susceptible
   lattice_i_days=zeros(size,size);
   
   initial_infections=1;
@@ -36,26 +36,26 @@ for iter=1:times
 %    initial_y=floor(size*rand())+1;
     initial_x=floor(size/2)+1;
     initial_y=floor(size/2)+1;
-    lattice_si(initial_x,initial_y)=1; %1 is infected
+    lattice_si(initial_x,initial_y,iter)=1; %1 is infected
   endfor
 
   for j=1:days
     i=rand(size);
-    lattice_si_temp=lattice_si;
+    lattice_si_temp=lattice_si(:,:,iter);
     
-    lattice_i_days=lattice_i_days+(lattice_si==1); %each day the chance of recovery/death goes up linearly
+    lattice_i_days=lattice_i_days+(lattice_si(:,:,iter)==1); %each day the chance of recovery/death goes up linearly
       
-    lattice_neighbors=infection_rate*conv2(lattice_si,infection_matrix,"same")-i;
-    lattice_si_temp=lattice_si | (lattice_neighbors>0);
-    lattice_rd=lattice_rd+3*(lattice_si.*(i>(1-(death_chance*lattice_i_days))))+2*(lattice_si.*(i<(recovery_chance*lattice_i_days)));
-    lattice_si=lattice_si_temp & not(lattice_rd);
+    lattice_neighbors=infection_rate*conv2(lattice_si(:,:,iter),infection_matrix,"same")-i;
+    lattice_si_temp=lattice_si(:,:,iter) | (lattice_neighbors>0);
+    lattice_rd(:,:,iter)=lattice_rd(:,:,iter)+3*(lattice_si(:,:,iter).*(i>(1-(death_chance*lattice_i_days))))+2*(lattice_si(:,:,iter).*(i<(recovery_chance*lattice_i_days)));
+    lattice_si(:,:,iter)=lattice_si_temp & not(lattice_rd(:,:,iter));
     
-    end_s(j,iter)=sum(sum((lattice_si+lattice_rd)==0));
-    end_i(j,iter)=sum(sum((lattice_si+lattice_rd)==1));
-    end_r(j,iter)=sum(sum((lattice_si+lattice_rd)==2));
-    end_d(j,iter)=sum(sum((lattice_si+lattice_rd)==3));
+    end_s(j,iter)=sum(sum((lattice_si(:,:,iter)+lattice_rd(:,:,iter))==0));
+    end_i(j,iter)=sum(sum((lattice_si(:,:,iter)+lattice_rd(:,:,iter))==1));
+    end_r(j,iter)=sum(sum((lattice_si(:,:,iter)+lattice_rd(:,:,iter))==2));
+    end_d(j,iter)=sum(sum((lattice_si(:,:,iter)+lattice_rd(:,:,iter))==3));
     
-    if any(any(lattice_si))==0
+    if any(any(lattice_si(:,:,iter)))==0
       break
     endif
   endfor
@@ -79,6 +79,12 @@ for j=1:days
   end_dd_average(j)=sum(end_d(j,:).*end_d(j,:))/times;
 endfor
 
+for x=1:size
+  for y=1:size
+    lattice_si_average(x,y)=sum(lattice_si(x,y,:))/times;
+    lattice_rd_average(x,y)=sum(lattice_rd(x,y,:))/times;
+  endfor
+endfor
 figure(1)
 x=1:days;
 clf;
@@ -88,6 +94,7 @@ plot(x,end_i_average(x),'r','LineWidth',1)
 plot(x,end_r_average(x),'g','LineWidth',1)
 plot(x,end_d_average(x),'k','LineWidth',1)
 title({'Averages over 100 runs of the simulation'})
+hold off
 
 figure(2)
 clf;
@@ -99,6 +106,7 @@ plot(x,(end_ir_average(x)-end_i_average(x).*end_r_average(x))./(end_i_average(x)
 plot(x,(end_id_average(x)-end_i_average(x).*end_d_average(x))./(end_i_average(x).*end_d_average(x)),'m','LineWidth',1)
 plot(x,(end_rd_average(x)-end_r_average(x).*end_d_average(x))./(end_r_average(x).*end_d_average(x)),'b','LineWidth',1)
 legend('SI','SR','SD','IR','ID','RD')
+hold off
 
 figure(3)
 clf;
@@ -108,3 +116,12 @@ plot(x,(end_ii_average(x)-end_i_average(x).*end_i_average(x))./(end_i_average(x)
 plot(x,(end_rr_average(x)-end_r_average(x).*end_r_average(x))./(end_r_average(x).*end_r_average(x)),'g','LineWidth',1)
 plot(x,(end_dd_average(x)-end_d_average(x).*end_d_average(x))./(end_d_average(x).*end_d_average(x)),'k','LineWidth',1)
 legend('SS','II','RR','DD')
+hold off
+
+figure(4)
+clf;
+hold on
+x=1:size;
+y=1:size;
+contourf(x,y,lattice_si_average(x,y)+lattice_rd_average(x,y),0:4)
+hold off
