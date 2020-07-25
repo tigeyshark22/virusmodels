@@ -1,18 +1,18 @@
 %SIRD model
 clear
 
-size=64; %side length of square
+size=256; %side length of square
 
-days=30;
+days=300;
 
-infection_rate=.1; %the rate that each additional neighbor multiplies the infection by
-infection_radius=3; %how much taxicab distance away someone can be and still infect
-infection_factor=1.5; %chance goes down by a factor of this for every further distance
-death_chance=.005;
-recovery_chance=.015;
+infection_rate=.001; %the rate that each additional neighbor multiplies the infection by
+infection_radius=10; %how much taxicab distance away someone can be and still infect
+infection_factor=1.1; %chance goes down by a factor of this for every further distance
+death_chance=.0003;
+recovery_chance=.004;
 long_connections=5; %how many "longer distance" connections can infect people
 
-times=100; %ensemble only
+times=2; %ensemble only
 
 %setting up infection mechanism
 for radius=1:infection_radius
@@ -56,6 +56,10 @@ for iter=1:times
     end_d(j,iter)=sum(sum((lattice_si(:,:,iter)+lattice_rd(:,:,iter))==3));
     
     if any(any(lattice_si(:,:,iter)))==0
+      end_s(:,iter)=end_s(:,iter-1);
+      end_i(:,iter)=end_i(:,iter-1);
+      end_r(:,iter)=end_r(:,iter-1);
+      end_d(:,iter)=end_d(:,iter-1);
       break
     endif
   endfor
@@ -93,35 +97,47 @@ plot(x,end_s_average(x),'b','LineWidth',1)
 plot(x,end_i_average(x),'r','LineWidth',1)
 plot(x,end_r_average(x),'g','LineWidth',1)
 plot(x,end_d_average(x),'k','LineWidth',1)
-title({'Averages over 100 runs of the simulation'})
+xlabel("Days")
+ylabel("Number of people")
+legend("Susceptible","Infected","Recovered","Dead")
+title({"Stochastic Model"})
 hold off
 
 figure(2)
 clf;
 hold on
-plot(x,(end_si_average(x)-end_s_average(x).*end_i_average(x))./(end_s_average(x).*end_i_average(x)),'r','LineWidth',1)
-plot(x,(end_sr_average(x)-end_s_average(x).*end_r_average(x))./(end_s_average(x).*end_r_average(x)),'g','LineWidth',1)
-plot(x,(end_sd_average(x)-end_s_average(x).*end_d_average(x))./(end_s_average(x).*end_d_average(x)),'k','LineWidth',1)
-plot(x,(end_ir_average(x)-end_i_average(x).*end_r_average(x))./(end_i_average(x).*end_r_average(x)),'c','LineWidth',1)
-plot(x,(end_id_average(x)-end_i_average(x).*end_d_average(x))./(end_i_average(x).*end_d_average(x)),'m','LineWidth',1)
-plot(x,(end_rd_average(x)-end_r_average(x).*end_d_average(x))./(end_r_average(x).*end_d_average(x)),'b','LineWidth',1)
+plot(x,(end_si_average(x)-end_s_average(x).*end_i_average(x))./((end_s_average(x)+1).*(end_i_average(x)+1)),'r','LineWidth',1)
+plot(x,(end_sr_average(x)-end_s_average(x).*end_r_average(x))./((end_s_average(x)+1).*(end_r_average(x)+1)),'g','LineWidth',1)
+plot(x,(end_sd_average(x)-end_s_average(x).*end_d_average(x))./((end_s_average(x)+1).*(end_d_average(x)+1)),'k','LineWidth',1)
+plot(x,(end_ir_average(x)-end_i_average(x).*end_r_average(x))./((end_i_average(x)+1).*(end_r_average(x)+1)),'c','LineWidth',1)
+plot(x,(end_id_average(x)-end_i_average(x).*end_d_average(x))./((end_i_average(x)+1).*(end_d_average(x)+1)),'m','LineWidth',1)
+plot(x,(end_rd_average(x)-end_r_average(x).*end_d_average(x))./((end_r_average(x)+1).*(end_d_average(x)+1)),'b','LineWidth',1)
 legend('SI','SR','SD','IR','ID','RD')
 hold off
 
 figure(3)
 clf;
 hold on
-plot(x,(end_ss_average(x)-end_s_average(x).*end_s_average(x))./(end_s_average(x).*end_s_average(x)),'b','LineWidth',1)
-plot(x,(end_ii_average(x)-end_i_average(x).*end_i_average(x))./(end_i_average(x).*end_i_average(x)),'r','LineWidth',1)
-plot(x,(end_rr_average(x)-end_r_average(x).*end_r_average(x))./(end_r_average(x).*end_r_average(x)),'g','LineWidth',1)
-plot(x,(end_dd_average(x)-end_d_average(x).*end_d_average(x))./(end_d_average(x).*end_d_average(x)),'k','LineWidth',1)
+plot(x,(end_ss_average(x)-end_s_average(x).*end_s_average(x))./((end_s_average(x)+1).*(end_s_average(x)+1)),'b','LineWidth',1)
+plot(x,(end_ii_average(x)-end_i_average(x).*end_i_average(x))./((end_i_average(x)+1).*(end_i_average(x)+1)),'r','LineWidth',1)
+plot(x,(end_rr_average(x)-end_r_average(x).*end_r_average(x))./((end_r_average(x)+1).*(end_r_average(x)+1)),'g','LineWidth',1)
+plot(x,(end_dd_average(x)-end_d_average(x).*end_d_average(x))./((end_d_average(x)+1).*(end_d_average(x)+1)),'k','LineWidth',1)
 legend('SS','II','RR','DD')
 hold off
 
 figure(4)
 clf;
 hold on
+x=2:days;
+plot(x, (end_s_average(x)-end_s_average(x-1))./(end_s_average(x-1).*end_i_average(x-1)),'k','LineWidth',1)
+title({"Change in S divided by SI"})
+xlabel("Days")
+hold off
+
+figure(5)
+clf;
+hold on
 x=1:size;
 y=1:size;
-contourf(x,y,lattice_si_average(x,y)+lattice_rd_average(x,y),0:4)
+%contourf(x,y,lattice_si_average(x,y)+lattice_rd_average(x,y),0:4)
 hold off
