@@ -2,9 +2,9 @@
 clear
 pkg load statistics
 
-size=256; %side length of square
+size=64; %side length of square
 
-days=300;
+days=30;
 
 lattice_si=zeros(size,size);
 lattice_rd=zeros(size,size); %0 is susceptible
@@ -28,23 +28,30 @@ for x=1:initial_infections
   lattice_si(initial_x,initial_y)=1; %1 is infected
 endfor
 
-i=rand(size);
-mask_wearers=1-(mask_effectiveness*(i<mask_probability));
-
-i=rand(size);
-elderly=1+(elderly_vulnerability-1)*(i<elderly_probability);
-
 lattice_radius=poissinv(rand(size),average_infection_radius);
 
 for j=1:days
   i=rand(size);
   lattice_si_temp=lattice_si;
+  lattice_conv=zeros(size,size);
   
-  lattice_radius
+  for infection_radius=1:max(max(lattice_radius))
+    infection_matrix=zeros(2*infection_radius+1,2*infection_radius+1);
+    for radius=1:infection_radius
+      for x_offset=0:radius
+        infection_matrix(infection_radius+1+x_offset,infection_radius+1+radius-x_offset)=1; 
+        infection_matrix(infection_radius+1-x_offset,infection_radius+1+radius-x_offset)=1;
+        infection_matrix(infection_radius+1+x_offset,infection_radius+1-radius+x_offset)=1;
+        infection_matrix(infection_radius+1-x_offset,infection_radius+1-radius+x_offset)=1;    
+      endfor
+    endfor
+      
+    lattice_conv+=conv2(lattice_si,infection_matrix,"same").*(lattice_radius==infection_radius);
+  endfor
   
   lattice_i_days=lattice_i_days+(lattice_si==1); %each day the chance of death/recovery goes up linearly
     
-  lattice_neighbors=(infection_rate*conv2(lattice_si,infection_matrix,"same")).*mask_wearers.*elderly-i;
+  lattice_neighbors=infection_rate*lattice_conv-i;
   lattice_si_temp=lattice_si | (lattice_neighbors>0);
   lattice_rd=lattice_rd+3*(lattice_si.*(i>(1-(death_chance*lattice_i_days))))+2*(lattice_si.*(i<(recovery_chance*lattice_i_days)));
   lattice_si=lattice_si_temp & not(lattice_rd);
@@ -65,7 +72,7 @@ figure(1)
 clf;
 x=1:size;
 y=1:size;
-%contourf(x,y,lattice_si(x,y)+lattice_rd(x,y),0:4)
+contourf(x,y,lattice_si(x,y)+lattice_rd(x,y),0:4)
 title ({"Final lattice"});
 
 figure(2)
