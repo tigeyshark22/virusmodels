@@ -2,9 +2,9 @@
 clear
 pkg load statistics
 
-size=64; %side length of square
+size=256; %side length of square
 
-days=30;
+days=300;
 
 lattice_si=zeros(size,size);
 lattice_rd=zeros(size,size); %0 is susceptible
@@ -72,7 +72,7 @@ figure(1)
 clf;
 x=1:size;
 y=1:size;
-contourf(x,y,lattice_si(x,y)+lattice_rd(x,y),0:4)
+%contourf(x,y,lattice_si(x,y)+lattice_rd(x,y),0:4)
 title ({"Final lattice"});
 
 figure(2)
@@ -86,3 +86,4 @@ plot(x,end_d(x),'k','LineWidth',1)
 xlabel("Days")
 ylabel("Number of people")
 legend("Susceptible","Infected","Recovered","Dead")
+title({"Stochastic Model with Poisson Distribution of Radii"})
