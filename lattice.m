@@ -10,7 +10,7 @@ lattice_rd=zeros(size,size); %0 is susceptible
 lattice_i_days=zeros(size,size);
 
 initial_infections=1;
-infection_rate=.05; %the rate that each additional neighbor multiplies the infection by
+infection_rate=.01; %the rate that each additional neighbor multiplies the infection by
 infection_radius=3; %how much taxicab distance away someone can be and still infect
 infection_factor=2; %chance goes down by a factor of this for every further distance
 death_chance=.0003; %chances are PER DAY
