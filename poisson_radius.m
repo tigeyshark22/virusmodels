@@ -11,9 +11,9 @@ lattice_rd=zeros(size,size); %0 is susceptible
 lattice_i_days=zeros(size,size);
 
 initial_infections=1;
-infection_rate=.01; %the rate that each additional neighbor multiplies the infection by
+infection_rate=.05; %the rate that each additional neighbor multiplies the infection by
 average_infection_radius=2; %how much taxicab distance away someone can be and still infect
-infection_factor=2; %chance goes down by a factor of this for every further distance
+infection_factor=1; %chance goes down by a factor of this for every further distance
 death_chance=.0003; %chances are PER DAY
 recovery_chance=.004;
 %long_connections=5; %how many "longer distance" connections can infect people
@@ -39,10 +39,10 @@ for j=1:days
     infection_matrix=zeros(2*infection_radius+1,2*infection_radius+1);
     for radius=1:infection_radius
       for x_offset=0:radius
-        infection_matrix(infection_radius+1+x_offset,infection_radius+1+radius-x_offset)=1; 
-        infection_matrix(infection_radius+1-x_offset,infection_radius+1+radius-x_offset)=1;
-        infection_matrix(infection_radius+1+x_offset,infection_radius+1-radius+x_offset)=1;
-        infection_matrix(infection_radius+1-x_offset,infection_radius+1-radius+x_offset)=1;    
+        infection_matrix(infection_radius+1+x_offset,infection_radius+1+radius-x_offset)=1/infection_factor^(radius-1); 
+        infection_matrix(infection_radius+1-x_offset,infection_radius+1+radius-x_offset)=1/infection_factor^(radius-1);
+        infection_matrix(infection_radius+1+x_offset,infection_radius+1-radius+x_offset)=1/infection_factor^(radius-1);
+        infection_matrix(infection_radius+1-x_offset,infection_radius+1-radius+x_offset)=1/infection_factor^(radius-1);    
       endfor
     endfor
       
@@ -83,7 +83,10 @@ plot(x,end_s(x),'b','LineWidth',1)
 plot(x,end_i(x),'r','LineWidth',1)
 plot(x,end_r(x),'g','LineWidth',1)
 plot(x,end_d(x),'k','LineWidth',1)
-xlabel("Days")
-ylabel("Number of people")
-legend("Susceptible","Infected","Recovered","Dead")
-title({"Stochastic Model with Poisson Distribution of Radii"})
+set(gca,"ylim",[0 size^2])
+set(gca,"xtick",0:100:days)
+set(gca,"fontsize",15)
+xlabel("Days", 'fontsize', 15)
+ylabel("Number of people", 'fontsize', 15)
+%legend("Susceptible","Infected","Recovered","Dead")
+%title({"Stochastic Model with Poisson Distribution of Radii"})

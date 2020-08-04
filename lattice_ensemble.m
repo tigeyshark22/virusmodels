@@ -5,9 +5,9 @@ size=256; %side length of square
 
 days=300;
 
-infection_rate=.01; %the rate that each additional neighbor multiplies the infection by
-infection_radius=2; %how much taxicab distance away someone can be and still infect
-infection_factor=1.25; %chance goes down by a factor of this for every further distance
+infection_rate=.05; %the rate that each additional neighbor multiplies the infection by
+infection_radius=3; %how much taxicab distance away someone can be and still infect
+infection_factor=2; %chance goes down by a factor of this for every further distance
 death_chance=.0003;
 recovery_chance=.004;
 long_connections=5; %how many "longer distance" connections can infect people
@@ -97,10 +97,13 @@ plot(x,end_s_average(x),'b','LineWidth',1)
 plot(x,end_i_average(x),'r','LineWidth',1)
 plot(x,end_r_average(x),'g','LineWidth',1)
 plot(x,end_d_average(x),'k','LineWidth',1)
-xlabel("Days")
-ylabel("Number of people")
-legend("Susceptible","Infected","Recovered","Dead")
-title({"Stochastic Model"})
+set(gca,"ylim",[0 size^2])
+set(gca,"xtick",0:100:days)
+set(gca,"fontsize",15)
+xlabel("Days", 'fontsize', 15)
+ylabel("Number of people", 'fontsize', 15)
+%legend("Susceptible","Infected","Recovered","Dead")
+%title({"Stochastic Model"})
 hold off
 
 figure(2)
