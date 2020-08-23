@@ -1,3 +1,4 @@
+
 %SIRD model
 clear
 
@@ -11,6 +12,7 @@ infection_factor=2; %chance goes down by a factor of this for every further dist
 death_chance=.0003;
 recovery_chance=.004;
 long_connections=5; %how many "longer distance" connections can infect people
+success_connect=.5;
 
 times=20; %ensemble only
 
@@ -28,6 +30,7 @@ for iter=1:times
   lattice_si(:,:,iter)=zeros(size,size);
   lattice_rd(:,:,iter)=zeros(size,size); %0 is susceptible
   lattice_i_days=zeros(size,size);
+  lattice_random(:,:,iter)=floor(rand(infection_radius*2+1)+success_connect);
   
   initial_infections=1;
 
@@ -36,7 +39,7 @@ for iter=1:times
 %    initial_y=floor(size*rand())+1;
     initial_x=floor(size/2)+1;
     initial_y=floor(size/2)+1;
-    lattice_si(initial_x,initial_y,iter)=1; %1 is infected
+    lattice_si(initial_x,initial_y,iter)=1;
   endfor
 
   for j=1:days
@@ -45,7 +48,7 @@ for iter=1:times
     
     lattice_i_days=lattice_i_days+(lattice_si(:,:,iter)==1); %each day the chance of recovery/death goes up linearly
       
-    lattice_neighbors=infection_rate*conv2(lattice_si(:,:,iter),infection_matrix,"same")-i;
+    lattice_neighbors=infection_rate*conv2(lattice_si(:,:,iter),infection_matrix.*lattice_random(:,:,iter),"same")-i;
     lattice_si_temp=lattice_si(:,:,iter) | (lattice_neighbors>0);
     lattice_rd(:,:,iter)=lattice_rd(:,:,iter)+3*(lattice_si(:,:,iter).*(i>(1-(death_chance*lattice_i_days))))+2*(lattice_si(:,:,iter).*(i<(recovery_chance*lattice_i_days)));
     lattice_si(:,:,iter)=lattice_si_temp & not(lattice_rd(:,:,iter));
