@@ -3,7 +3,7 @@ clear
 
 size=256; %side length of square
 
-days=250;
+days=500;
 
 lattice_si=zeros(size,size);
 lattice_rd=zeros(size,size); %0 is susceptible
@@ -11,9 +11,9 @@ lattice_vaccinated=zeros(size,size);
 lattice_i_days=zeros(size,size);
 
 initial_infections=1;
-infection_rate=.004; %the rate that each additional neighbor multiplies the infection probability by
-infection_radius=4; %how much taxicab distance away someone can be and still infect
-infection_factor=1.25; %chance goes down by a factor of this for every further distance
+infection_rate=.05; %the rate that each additional neighbor multiplies the infection probability by
+infection_radius=3; %how much taxicab distance away someone can be and still infect
+infection_factor=2; %chance goes down by a factor of this for every further distance
 death_chance=.0003; %chances are PER DAY
 recovery_chance=.004;
 %long_connections=5; %how many "longer distance" connections can infect people
@@ -25,7 +25,7 @@ elderly_proportion=0; %reflects current statistics for the world
 elderly_vulnerability=6; %how many times as vulnerable they are
 
 vaccination_rate=.005; %proportion of susceptible population vaccinated on a given day
-vaccination_spread_rate=.5; %chance of spread from vaccinated people (proportion that the computed
+%vaccination_spread_rate=.5; %chance of spread from vaccinated people (proportion that the computed
                             %infection rate/factor result is multiplied by)
 vaccination_threshold=.05; %proportion of people I/R/D before vaccination starts
 
@@ -73,7 +73,7 @@ for j=1:days
   end_v(j)=sum(sum(lattice_vaccinated==1));
   
   i=rand(size);
-  if j>1 & (end_i(j-1)+end_r(j-1)+end_d(j-1))>size^2*vaccination_threshold %checks if vaccination occurs
+  if j>1 && (end_i(j-1)+end_r(j-1)+end_d(j-1))>size^2*vaccination_threshold %checks if vaccination occurs
    lattice_vaccinated=lattice_vaccinated+((lattice_vaccinated==0).*((lattice_si+lattice_rd)==0).*(i<vaccination_rate));
   endif
   
@@ -88,12 +88,12 @@ figure(1)
 clf;
 x=1:size;
 y=1:size;
-contourf(x,y,lattice_si(x,y)+lattice_rd(x,y),0:4)
+%contourf(x,y,lattice_si(x,y)+lattice_rd(x,y),0:4)
 title ({"Final lattice"});
 
 figure(2)
 clf;
-x=1:days;
+x=1:j;
 hold on
 plot(x,end_s(x),'b','LineWidth',1)
 plot(x,end_i(x),'r','LineWidth',1)
