@@ -6,13 +6,13 @@ size=256; %side length of square
 
 days=300;
 
-infection_rate=.05; %the rate that each additional neighbor multiplies the infection by
-infection_radius=3; %how much taxicab distance away someone can be and still infect
-infection_factor=2; %chance goes down by a factor of this for every further distance
+infection_rate=.002; %the rate that each additional neighbor multiplies the infection by
+infection_radius=5; %how much taxicab distance away someone can be and still infect
+infection_factor=1.2; %chance goes down by a factor of this for every further distance
 death_chance=.0003;
 recovery_chance=.004;
 long_connections=5; %how many "longer distance" connections can infect people
-success_connect=.5;
+success_connect=.8;
 
 times=20; %ensemble only
 

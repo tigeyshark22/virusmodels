@@ -47,6 +47,8 @@ for iter=1:times
       
     lattice_neighbors=infection_rate*conv2(lattice_si(:,:,iter),infection_matrix,"same")-i;
     lattice_si_temp=lattice_si(:,:,iter) | (lattice_neighbors>0);
+    
+    i=rand(size);
     lattice_rd(:,:,iter)=lattice_rd(:,:,iter)+3*(lattice_si(:,:,iter).*(i>(1-(death_chance*lattice_i_days))))+2*(lattice_si(:,:,iter).*(i<(recovery_chance*lattice_i_days)));
     lattice_si(:,:,iter)=lattice_si_temp & not(lattice_rd(:,:,iter));
     
