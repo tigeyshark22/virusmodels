@@ -95,7 +95,7 @@ figure(1)
 clf;
 x=1:size;
 y=1:size;
-contourf(x,y,lattice_si(x,y)+lattice_rd(x,y),0:4)
+%contourf(x,y,lattice_si(x,y)+lattice_rd(x,y),0:4)
 title ({"Final lattice"});
 
 figure(2)
@@ -106,11 +106,22 @@ plot(x,end_s(x),'b','LineWidth',2)
 plot(x,end_i(x),'r','LineWidth',2)
 plot(x,end_r(x),'g','LineWidth',2)
 plot(x,end_d(x),'k','LineWidth',2)
-plot(x,end_v(x),'y','LineWidth',2)
+%plot(x,end_v(x),'y','LineWidth',2)
 set(gca,"ylim",[0 size^2])
 set(gca,"xtick",0:100:days)
 set(gca,"fontsize",15)
 xlabel("Days", 'fontsize', 15)
 ylabel("Number of people", 'fontsize', 15)
-legend("Susceptible (not vaccinated)","Infected","Recovered","Dead","Vaccinated")
+legend("Susceptible (not vaccinated)","Infected","Recovered","Dead")%,"Vaccinated")
 title({"Stochastic Model"})
+
+figure(3)
+clf;
+hold on
+x=2:days;
+plot(x, (end_s(x)-end_s(x-1))./(end_s(x-1).*end_i(x-1)),'k','LineWidth',1)
+set(gca,"fontsize",15)
+set(gca,"ylim",[-.000005 0])
+title({"Change in S divided by SI"})
+xlabel("Days")
+hold off

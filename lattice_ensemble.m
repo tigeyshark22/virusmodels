@@ -135,6 +135,7 @@ clf;
 hold on
 x=2:days;
 plot(x, (end_s_average(x)-end_s_average(x-1))./(end_s_average(x-1).*end_i_average(x-1)),'k','LineWidth',1)
+set(gca,"fontsize",15)
 title({"Change in S divided by SI"})
 xlabel("Days")
 hold off
