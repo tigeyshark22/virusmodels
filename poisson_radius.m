@@ -11,9 +11,9 @@ lattice_rd=zeros(size,size); %0 is susceptible
 lattice_i_days=zeros(size,size);
 
 initial_infections=1;
-infection_rate=.05; %the rate that each additional neighbor multiplies the infection by
-average_infection_radius=3; %how much taxicab distance away someone can be and still infect
-infection_factor=2; %chance goes down by a factor of this for every further distance
+infection_rate=.002; %the rate that each additional neighbor multiplies the infection by
+average_infection_radius=5; %how much taxicab distance away someone can be and still infect
+infection_factor=1.2; %chance goes down by a factor of this for every further distance
 death_chance=.0003; %chances are PER DAY
 recovery_chance=.004;
 %long_connections=5; %how many "longer distance" connections can infect people
@@ -28,7 +28,7 @@ for x=1:initial_infections
   lattice_si(initial_x,initial_y)=1; %1 is infected
 endfor
 
-lattice_radius=poissinv(rand(size),average_infection_radius);
+lattice_radius=poissinv(rand(size),average_infection_radius-1)+1;
 
 for j=1:days
   i=rand(size);
@@ -77,12 +77,12 @@ title ({"Final lattice"});
 
 figure(2)
 clf;
-x=1:days;
+x=1:j;
 hold on
-plot(x,end_s(x),'b','LineWidth',1)
-plot(x,end_i(x),'r','LineWidth',1)
-plot(x,end_r(x),'g','LineWidth',1)
-plot(x,end_d(x),'k','LineWidth',1)
+plot(x,end_s(x),'b','LineWidth',2)
+plot(x,end_i(x),'r','LineWidth',2)
+plot(x,end_r(x),'g','LineWidth',2)
+plot(x,end_d(x),'k','LineWidth',2)
 set(gca,"ylim",[0 size^2])
 set(gca,"xtick",0:100:days)
 set(gca,"fontsize",15)

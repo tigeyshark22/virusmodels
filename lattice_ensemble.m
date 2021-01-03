@@ -5,12 +5,12 @@ size=256; %side length of square
 
 days=300;
 
-infection_rate=.05; %the rate that each additional neighbor multiplies the infection by
-infection_radius=3; %how much taxicab distance away someone can be and still infect
-infection_factor=2; %chance goes down by a factor of this for every further distance
+infection_rate=.002; %the rate that each additional neighbor multiplies the infection by
+infection_radius=5; %how much taxicab distance away someone can be and still infect
+infection_factor=1.2; %chance goes down by a factor of this for every further distance
 death_chance=.0003;
 recovery_chance=.004;
-long_connections=5; %how many "longer distance" connections can infect people
+%long_connections=5; %how many "longer distance" connections can infect people
 
 times=20; %ensemble only
 
@@ -95,10 +95,10 @@ figure(1)
 x=1:days;
 clf;
 hold on
-plot(x,end_s_average(x),'b','LineWidth',1)
-plot(x,end_i_average(x),'r','LineWidth',1)
-plot(x,end_r_average(x),'g','LineWidth',1)
-plot(x,end_d_average(x),'k','LineWidth',1)
+plot(x,end_s_average(x),'b','LineWidth',2)
+plot(x,end_i_average(x),'r','LineWidth',2)
+plot(x,end_r_average(x),'g','LineWidth',2)
+plot(x,end_d_average(x),'k','LineWidth',2)
 set(gca,"ylim",[0 size^2])
 set(gca,"xtick",0:100:days)
 set(gca,"fontsize",15)
@@ -108,27 +108,27 @@ ylabel("Number of people", 'fontsize', 15)
 %title({"Stochastic Model"})
 hold off
 
-figure(2)
-clf;
-hold on
-plot(x,(end_si_average(x)-end_s_average(x).*end_i_average(x))./((end_s_average(x)+1).*(end_i_average(x)+1)),'r','LineWidth',1)
-plot(x,(end_sr_average(x)-end_s_average(x).*end_r_average(x))./((end_s_average(x)+1).*(end_r_average(x)+1)),'g','LineWidth',1)
-plot(x,(end_sd_average(x)-end_s_average(x).*end_d_average(x))./((end_s_average(x)+1).*(end_d_average(x)+1)),'k','LineWidth',1)
-plot(x,(end_ir_average(x)-end_i_average(x).*end_r_average(x))./((end_i_average(x)+1).*(end_r_average(x)+1)),'c','LineWidth',1)
-plot(x,(end_id_average(x)-end_i_average(x).*end_d_average(x))./((end_i_average(x)+1).*(end_d_average(x)+1)),'m','LineWidth',1)
-plot(x,(end_rd_average(x)-end_r_average(x).*end_d_average(x))./((end_r_average(x)+1).*(end_d_average(x)+1)),'b','LineWidth',1)
-legend('SI','SR','SD','IR','ID','RD')
-hold off
+%figure(2)
+%clf;
+%hold on
+%plot(x,(end_si_average(x)-end_s_average(x).*end_i_average(x))./((end_s_average(x)+1).*(end_i_average(x)+1)),'r','LineWidth',1)
+%plot(x,(end_sr_average(x)-end_s_average(x).*end_r_average(x))./((end_s_average(x)+1).*(end_r_average(x)+1)),'g','LineWidth',1)
+%plot(x,(end_sd_average(x)-end_s_average(x).*end_d_average(x))./((end_s_average(x)+1).*(end_d_average(x)+1)),'k','LineWidth',1)
+%plot(x,(end_ir_average(x)-end_i_average(x).*end_r_average(x))./((end_i_average(x)+1).*(end_r_average(x)+1)),'c','LineWidth',1)
+%plot(x,(end_id_average(x)-end_i_average(x).*end_d_average(x))./((end_i_average(x)+1).*(end_d_average(x)+1)),'m','LineWidth',1)
+%plot(x,(end_rd_average(x)-end_r_average(x).*end_d_average(x))./((end_r_average(x)+1).*(end_d_average(x)+1)),'b','LineWidth',1)
+%legend('SI','SR','SD','IR','ID','RD')
+%hold off
 
-figure(3)
-clf;
-hold on
-plot(x,(end_ss_average(x)-end_s_average(x).*end_s_average(x))./((end_s_average(x)+1).*(end_s_average(x)+1)),'b','LineWidth',1)
-plot(x,(end_ii_average(x)-end_i_average(x).*end_i_average(x))./((end_i_average(x)+1).*(end_i_average(x)+1)),'r','LineWidth',1)
-plot(x,(end_rr_average(x)-end_r_average(x).*end_r_average(x))./((end_r_average(x)+1).*(end_r_average(x)+1)),'g','LineWidth',1)
-plot(x,(end_dd_average(x)-end_d_average(x).*end_d_average(x))./((end_d_average(x)+1).*(end_d_average(x)+1)),'k','LineWidth',1)
-legend('SS','II','RR','DD')
-hold off
+%figure(3)
+%clf;
+%hold on
+%plot(x,(end_ss_average(x)-end_s_average(x).*end_s_average(x))./((end_s_average(x)+1).*(end_s_average(x)+1)),'b','LineWidth',1)
+%plot(x,(end_ii_average(x)-end_i_average(x).*end_i_average(x))./((end_i_average(x)+1).*(end_i_average(x)+1)),'r','LineWidth',1)
+%plot(x,(end_rr_average(x)-end_r_average(x).*end_r_average(x))./((end_r_average(x)+1).*(end_r_average(x)+1)),'g','LineWidth',1)
+%plot(x,(end_dd_average(x)-end_d_average(x).*end_d_average(x))./((end_d_average(x)+1).*(end_d_average(x)+1)),'k','LineWidth',1)
+%legend('SS','II','RR','DD')
+%hold off
 
 figure(4)
 clf;
@@ -146,4 +146,21 @@ hold on
 x=1:size;
 y=1:size;
 %contourf(x,y,lattice_si_average(x,y)+lattice_rd_average(x,y),0:4)
+hold off
+
+figure(6)
+x=1:days;
+clf;
+hold on
+semilogy(x,end_s_average(x),'b','LineWidth',2)
+semilogy(x,end_i_average(x),'r','LineWidth',2)
+semilogy(x,end_r_average(x),'g','LineWidth',2)
+semilogy(x,end_d_average(x),'k','LineWidth',2)
+set(gca,"ylim",[0 size^2])
+set(gca,"xtick",0:100:days)
+set(gca,"fontsize",15)
+xlabel("Days", 'fontsize', 15)
+ylabel("Number of people", 'fontsize', 15)
+%legend("Susceptible","Infected","Recovered","Dead")
+%title({"Stochastic Model"})
 hold off

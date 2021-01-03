@@ -11,9 +11,9 @@ lattice_vaccinated=zeros(size,size);
 lattice_i_days=zeros(size,size);
 
 initial_infections=1;
-infection_rate=.002; %the rate that each additional neighbor multiplies the infection probability by
-infection_radius=5; %how much taxicab distance away someone can be and still infect
-infection_factor=1.2; %chance goes down by a factor of this for every further distance
+infection_rate=.05; %the rate that each additional neighbor multiplies the infection probability by
+infection_radius=3; %how much taxicab distance away someone can be and still infect
+infection_factor=2; %chance goes down by a factor of this for every further distance
 death_chance=.0003; %chances are PER DAY
 recovery_chance=.004;
 %long_connections=5; %how many "longer distance" connections can infect people
@@ -26,10 +26,10 @@ elderly_cluster=floor(size*sqrt(elderly_proportion));
 elderly_check=ones(elderly_cluster,elderly_cluster);
 elderly_vulnerability=6; %how many times as vulnerable they are
 
-vaccination_rate=0; %proportion of susceptible population vaccinated on a given day
+vaccination_rate=.01; %proportion of susceptible population vaccinated on a given day
 %vaccination_spread_rate=.5; %chance of spread from vaccinated people (proportion that the computed
                             %infection rate/factor result is multiplied by)
-vaccination_threshold=.05; %proportion of people I/R/D before vaccination starts
+vaccination_threshold=.12; %proportion of people I/R/D before vaccination starts
 
 for x=1:initial_infections
   %initial_x=floor(size*rand())+1; %first position of infected
@@ -106,19 +106,19 @@ plot(x,end_s(x),'b','LineWidth',2)
 plot(x,end_i(x),'r','LineWidth',2)
 plot(x,end_r(x),'g','LineWidth',2)
 plot(x,end_d(x),'k','LineWidth',2)
-%plot(x,end_v(x),'y','LineWidth',2)
+plot(x,end_v(x),'y','LineWidth',2)
 set(gca,"ylim",[0 size^2])
 set(gca,"xtick",0:100:days)
 set(gca,"fontsize",15)
 xlabel("Days", 'fontsize', 15)
 ylabel("Number of people", 'fontsize', 15)
-legend("Susceptible (not vaccinated)","Infected","Recovered","Dead")%,"Vaccinated")
+legend("Susceptible (not vaccinated)","Infected","Recovered","Dead","Vaccinated")
 title({"Stochastic Model"})
 
 figure(3)
 clf;
 hold on
-x=2:days;
+x=2:j;
 plot(x, (end_s(x)-end_s(x-1))./(end_s(x-1).*end_i(x-1)),'k','LineWidth',1)
 set(gca,"fontsize",15)
 set(gca,"ylim",[-.000005 0])
