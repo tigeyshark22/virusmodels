@@ -3,7 +3,7 @@ clear
 
 size=256; %side length of square
 
-%days=300;
+days=300;
 
 lattice_si=zeros(size,size);
 lattice_rd=zeros(size,size); %0 is susceptible
@@ -11,25 +11,25 @@ lattice_vaccinated=zeros(size,size);
 lattice_i_days=zeros(size,size);
 
 initial_infections=1;
-%infection_rate=.05; %the rate that each additional neighbor multiplies the infection probability by
-%infection_radius=3; %how much taxicab distance away someone can be and still infect
-%infection_factor=2; %chance goes down by a factor of this for every further distance
+infection_rate=.05; %the rate that each additional neighbor multiplies the infection probability by
+infection_radius=3; %how much taxicab distance away someone can be and still infect
+infection_factor=2; %chance goes down by a factor of this for every further distance
 death_chance=.0003; %chances are PER DAY
 recovery_chance=.004;
 %long_connections=5; %how many "longer distance" connections can infect people
 
-%mask_probability=0;
-%mask_effectiveness=.8; %how much of the time it prevents infection
+mask_probability=0;
+mask_effectiveness=.8; %how much of the time it prevents infection
 
-%elderly_proportion=0; %reflects current statistics for the world
+elderly_proportion=0; %reflects current statistics for the world
 elderly_cluster=floor(size*sqrt(elderly_proportion));
 elderly_check=ones(elderly_cluster,elderly_cluster);
-%elderly_vulnerability=6; %how many times as vulnerable they are
+elderly_vulnerability=6; %how many times as vulnerable they are
 
-%vaccination_rate=.01; %proportion of susceptible population vaccinated on a given day
-%vaccination_spread_rate=.5; %chance of spread from vaccinated people (proportion that the computed
+vaccination_rate=.01; %proportion of susceptible population vaccinated on a given day
+vaccination_spread_rate=.5; %chance of spread from vaccinated people (proportion that the computed
                             %infection rate/factor result is multiplied by)
-%vaccination_threshold=.12; %proportion of people I/R/D before vaccination starts
+vaccination_threshold=.12; %proportion of people I/R/D before vaccination starts
 
 for x=1:initial_infections
   %initial_x=floor(size*rand())+1; %first position of infected
