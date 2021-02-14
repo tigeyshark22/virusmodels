@@ -12,6 +12,11 @@ death_chance=.0003;
 recovery_chance=.004;
 %long_connections=5; %how many "longer distance" connections can infect people
 
+vaccination_rate=0; %proportion of susceptible population vaccinated on a given day
+%vaccination_spread_rate=.5; %chance of spread from vaccinated people (proportion that the computed
+                            %infection rate/factor result is multiplied by)
+vaccination_threshold=.05; %proportion of people I/R/D before vaccination starts
+
 times=20; %ensemble only
 
 %setting up infection mechanism
@@ -27,6 +32,7 @@ endfor
 for iter=1:times
   lattice_si(:,:,iter)=zeros(size,size);
   lattice_rd(:,:,iter)=zeros(size,size); %0 is susceptible
+  lattice_vaccinated(:,:,iter)=zeros(size,size);
   lattice_i_days=zeros(size,size);
   
   initial_infections=1;
@@ -46,7 +52,8 @@ for iter=1:times
     lattice_i_days=lattice_i_days+(lattice_si(:,:,iter)==1); %each day the chance of recovery/death goes up linearly
       
     lattice_neighbors=infection_rate*conv2(lattice_si(:,:,iter),infection_matrix,"same")-i;
-    lattice_si_temp=lattice_si(:,:,iter) | (lattice_neighbors>0);
+    lattice_si_temp=(((lattice_si(:,:,iter)==0) & not(lattice_vaccinated(:,:,iter))) & (lattice_neighbors>0))+lattice_si(:,:,iter);
+    %lattice_si_temp=lattice_si(:,:,iter) | (lattice_neighbors>0);
     
     i=rand(size);
     lattice_rd(:,:,iter)=lattice_rd(:,:,iter)+3*(lattice_si(:,:,iter).*(i>(1-(death_chance*lattice_i_days))))+2*(lattice_si(:,:,iter).*(i<(recovery_chance*lattice_i_days)));
@@ -56,6 +63,11 @@ for iter=1:times
     end_i(j,iter)=sum(sum((lattice_si(:,:,iter)+lattice_rd(:,:,iter))==1));
     end_r(j,iter)=sum(sum((lattice_si(:,:,iter)+lattice_rd(:,:,iter))==2));
     end_d(j,iter)=sum(sum((lattice_si(:,:,iter)+lattice_rd(:,:,iter))==3));
+    
+    i=rand(size);
+    if j>1 && (end_i(j-1.iter)+end_r(j-1,iter)+end_d(j-1,iter))>size^2*vaccination_threshold %checks if vaccination occurs
+     lattice_vaccinated(:,:,iter)=lattice_vaccinated(:,:,iter)+((lattice_vaccinated(:,:,iter)==0).*((lattice_si(:,:,iter)+lattice_rd(:,:,iter))==0).*(i<vaccination_rate));
+    endif
     
     if any(any(lattice_si(:,:,iter)))==0
       end_s(:,iter)=end_s(:,iter-1);

@@ -72,7 +72,7 @@ for j=1:days
   lattice_si_temp=(((lattice_si==0) & not(lattice_vaccinated)) & (lattice_neighbors>0))+lattice_si;
   %lattice_si_temp=lattice_si | (lattice_neighbors>0);
   
-  %i=rand(size);
+  i=rand(size);
   lattice_rd=lattice_rd+3*(lattice_si.*(i>(1-(death_chance*lattice_i_days))))+2*(lattice_si.*(i<(recovery_chance*lattice_i_days)));
   lattice_si=lattice_si_temp & not(lattice_rd);
   
@@ -135,7 +135,6 @@ if exportcorr=1
   set(gca,"ylim",[-.000005 0])
   title({"Change in S divided by SI"})
   xlabel("Days")
-  hold off
   print (['C:\Users\Owen Yang\Dropbox\virusmodels\' corrname], "-dpng")
 endif
 endfunction
