@@ -1,4 +1,4 @@
-function ode_func (days2,beta2,r2,d2,exportgraph,exportlog,gname,logname)
+function ode_func (days2,beta2,r2,d2,legendon,exportgraph,exportlog,gname,logname,)
 
 size=256;
 total=size^2;
@@ -37,7 +37,9 @@ if exportgraph==1
   set(gca,"fontsize",15)
   xlabel("Days", 'fontsize', 15)
   ylabel("Number of people", 'fontsize', 15)
-  %legend("Susceptible","Infected","Recovered","Dead")
+  if legendon==1
+    legend("Susceptible","Infected","Recovered","Dead")
+  endif
   title({"ODE Model"})
   hold off
   print (['C:\Users\Owen Yang\Dropbox\virusmodels\' gname], "-dpng")

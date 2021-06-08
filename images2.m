@@ -1,4 +1,13 @@
-%lattice_func2(300,.002,5,1.2,0,0,0,1,1,0,0,0,0,"sensemble.png",20);
-%lattice_func2(300,.004,4,1.25,0,0,0,1,1,0,0,0,0,"mensemble.png",20);
-ode_func(300,.059,.04,.003,0,1,0,"sodematch.png");
-ode_func(300,.065,.043,.003225,0,1,0,"modematch.png");
+lattice_func2(300,.002,5,1.2,0,0,0,1,1,0,0,0,0,"sensemble.png",20);
+lattice_func2(300,.004,4,1.25,0,0,0,1,1,0,0,0,0,"mensemble.png",20);
+ode_func(300,.059,.04,.003,0,0,1,0,"sodematch.png");
+ode_func(300,.065,.043,.003225,0,0,1,0,"modematch.png");
+ode_func(300,.1,.04,.003,1,1,0,0,"odegraph.png");
+poisson_func(300,.05,2,1.25,1,0,1,0,16000,"blah.png","poisson21.25+0.png");
+poisson_func(300,.05,2,1.25,0,0,1,0,16000,"blah.png","poisson21.25-0.png");
+poisson_func(300,.05,3,2,1,0,1,0,10000,"blah.png","poissonb.png");
+poisson_func(300,.004,4,1.25,1,0,1,0,1000,"blah.png","poissonm.png");
+poisson_func(300,.002,5,1.2,1,0,1,0,300,"blah.png","poissons.png");
+lattice_rcon_func(300,.05,3,2,.5,0,1,"ballistic.5.png");
+lattice_rcon_func(300,.05,3,2,.25,0,1,"ballistic.25.png");
+lattice_rcon_func(300,.004,4,1.25,.75,0,1,"middle.75.png");

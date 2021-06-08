@@ -3,7 +3,7 @@ clear
 
 size=256; %side length of square
 
-days=300;
+days=150;
 
 lattice_si=zeros(size,size);
 lattice_rd=zeros(size,size); %0 is susceptible
@@ -22,11 +22,11 @@ mask_probability=0;
 mask_effectiveness=.8; %how much of the time it prevents infection
 
 elderly_proportion=0; %reflects current statistics for the world
-elderly_cluster=floor(size*sqrt(elderly_proportion));
-elderly_check=ones(elderly_cluster,elderly_cluster);
-elderly_vulnerability=6; %how many times as vulnerable they are
+elderly_size=floor(size*sqrt(elderly_proportion));
+elderly_check=ones(elderly_size,elderly_size);
+elderly_vulnerability=2; %how many times as vulnerable they are
 
-vaccination_rate=.01; %proportion of susceptible population vaccinated on a given day
+vaccination_rate=0; %proportion of susceptible population vaccinated on a given day
 vaccination_spread_rate=.5; %chance of spread from vaccinated people (proportion that the computed
                             %infection rate/factor result is multiplied by)
 vaccination_threshold=.12; %proportion of people I/R/D before vaccination starts
@@ -43,11 +43,13 @@ i=rand(size);
 mask_wearers=1-(mask_effectiveness*(i<mask_probability));
 
 if elderly_proportion==0
-  elderly=ones(size,size);
+  elderly_matrix=ones(size,size);
 else
-  i=rand(size);
-  elderly_matrix=i<(elderly_proportion/(elderly_cluster^2));
-  elderly=1+(elderly_vulnerability-1)*(conv2(elderly_matrix,elderly_check,"same")>0);
+  initial_x=floor((size-elderly_size)*rand())+1+floor(elderly_size/2); %first position of infected
+  initial_y=floor((size-elderly_size)*rand())+1+floor(elderly_size/2);
+  elderly_matrix=zeros(size,size);
+  elderly_matrix(initial_x,initial_y)=1;
+  elderly_matrix=1+(elderly_vulnerability-1)*(conv2(elderly_matrix,elderly_check,"same")>0);
 endif
 
 %setting up infection mechanism
@@ -65,7 +67,7 @@ for j=1:days
   
   lattice_i_days=lattice_i_days+(lattice_si==1); %each day the chance of death/recovery goes up linearly
 
-  lattice_neighbors=(infection_rate*conv2(lattice_si,infection_matrix,"same")).*mask_wearers.*elderly-i;
+  lattice_neighbors=(infection_rate*conv2(lattice_si,infection_matrix,"same")).*mask_wearers.*elderly_matrix-i;
   lattice_si_temp=(((lattice_si==0) & not(lattice_vaccinated)) & (lattice_neighbors>0))+lattice_si;
   %lattice_si_temp=lattice_si | (lattice_neighbors>0);
   
@@ -95,7 +97,15 @@ figure(1)
 clf;
 x=1:size;
 y=1:size;
-%contourf(x,y,lattice_si(x,y)+lattice_rd(x,y),0:4)
+hold on
+contourf(x,y,lattice_si(x,y)+lattice_rd(x,y),0:4)
+if elderly_proportion!=0
+  plot(initial_x-elderly_size/2:initial_x+elderly_size/2,initial_y+elderly_size/2:initial_y+elderly_size/2,'r');
+  plot(initial_x-elderly_size/2:initial_x+elderly_size/2,initial_y-elderly_size/2:initial_y-elderly_size/2,'r');
+  plot(initial_x+elderly_size/2:initial_x+elderly_size/2,initial_y-elderly_size/2:initial_y+elderly_size/2,'r');
+  plot(initial_x-elderly_size/2:initial_x-elderly_size/2,initial_y-elderly_size/2:initial_y+elderly_size/2,'r');
+endif
+hold off
 title ({"Final lattice"});
 
 figure(2)
@@ -106,7 +116,7 @@ plot(x,end_s(x),'b','LineWidth',2)
 plot(x,end_i(x),'r','LineWidth',2)
 plot(x,end_r(x),'g','LineWidth',2)
 plot(x,end_d(x),'k','LineWidth',2)
-plot(x,end_v(x),'y','LineWidth',2)
+%plot(x,end_v(x),'y','LineWidth',2)
 set(gca,"ylim",[0 size^2])
 set(gca,"xtick",0:100:days)
 set(gca,"fontsize",15)
